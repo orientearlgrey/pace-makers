@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "72553903194",
+    "project_id": "pacemakers1502",
+    "storage_bucket": "pacemakers1502.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72553903194:android:0dbe8ecf842b461bf91463",
+        "android_client_info": {
+          "package_name": "systems.perceptual.pacemakers.preop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMGvbA2k-p6jN6Q6CSiZTVAj5ws3gTd4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
