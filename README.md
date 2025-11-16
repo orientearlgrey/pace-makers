@@ -95,29 +95,24 @@ A floating “Ask AI” action opens an embedded chat where the patient can:
 - request summaries in simple language  
 - get reassurance and instructions instantly  
 
-This reduces reliance on busy phone lines and ensures patients feel supported at all times.
-
-
-## 🏁 Demo Flow  
-1. **Open the patient profile** – See procedure, date, consultant, and explanation.  
-2. **Scroll through the pre-op checklist** – Clear, time-linked tasks.  
-3. **Receive a reminder** – Notification triggered based on schedule.  
-4. **Tap into the checklist item** – Mark it done; see extra details.  
-5. **Ask the AI companion a question** – Get instant, clear reassurance.  
+This reduces reliance on busy phone lines and ensures patients feel supported at all times.  
 
 
 ## 🧩 Tech Summary  
-*(Optional — include if required for the hackathon)*
 
-- Schedule-driven reminder engine  
-- React Native/Flutter UI  
-- Embedded LLM-based conversational agent  
-- Secure patient information handling  
-- Modular design for integration with hospital systems  
+- Notifications push using Firebase Cloud Messaging 
+- Mobile UI using Flutter (iOS and Android) 
+- Conversational agent using Claude  
+- Secure patient information handling using HeidiHealth API
 
 
 ## 🙌 Team  
-*Add team names, roles, or photo here.*
+
+- Earl Panganiban, Technical PM/Full-Stack Developer
+- Allie Li, UX Designer
+- Niloofar Tabarra, Clinician
+- Olatunbosun Segun, Clinician
+
 
 ## ✨ Closing  
 **Pre-op preparation shouldn’t be stressful.**  
