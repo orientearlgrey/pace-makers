@@ -110,7 +110,7 @@ This reduces reliance on busy phone lines and ensures patients feel supported at
 
 - Earl Panganiban, Technical PM/Full-Stack Developer
 - Allie Li, UX Designer
-- Niloofar Tabarra, Clinician
+- Niloofar Tabarra, Medical Doctor
 - Olatunbosun Segun, Clinician
 
 
