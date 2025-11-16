@@ -1,3 +1,10 @@
+
+System.getenv()["ANDROID_SDK_ROOT"]?.let {
+    // Overwrite the ANDROID_SDK_ROOT to use the one from the IDX environment
+    // to get the NDK license acceptance to work.
+    System.setProperty("ANDROID_SDK_ROOT", it)
+}
+
 allprojects {
     repositories {
         google()
