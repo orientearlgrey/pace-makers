@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff194b22)),
+        fontFamily: 'Inter',
       ),
       home: const PreOpChecklist(),
     );
@@ -221,9 +222,7 @@ class PreOpChecklist extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "Stop Apixaban 48 hours before procedure",
-                                  ),
+                                  Text("Stop Apixaban 48 hours before"),
                                   Text("Last dose: November 21-2025"),
                                 ],
                               ),
