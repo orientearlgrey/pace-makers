@@ -1,0 +1,33 @@
+name: preop
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+environment:
+  sdk: ^3.9.0
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.2.1
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - images/HEIDI_SYMBOL_CMYK_BARK.png
+    - images/pexels-olly-3831569.jpg
+    - images/claude.png
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: fonts/Inter-VariableFont_opsz,wght.ttf
+        - asset: fonts/Inter-Italic-VariableFont_opsz,wght.ttf
+          style: italic
+

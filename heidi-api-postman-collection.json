@@ -1,0 +1,776 @@
+{
+  "info": {
+    "_postman_id": "2af4fac4-003e-48ef-a109-a2fd58085f23",
+    "name": "Heidi API (Open API) – Postman Collection",
+    "description": "Postman collection for Heidi Open API. Includes JWT retrieval, Sessions, Transcription, Consult Notes, Documents, and Ask Heidi endpoints.\nDocs: https://www.heidihealth.com/developers/heidi-api/overview",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43704287",
+    "_collection_link": "https://heidi-eng.postman.co/workspace/cdc1b437-2a37-455d-a6ab-e206de70f433/collection/43704287-2af4fac4-003e-48ef-a109-a2fd58085f23?action=share&source=collection_link&creator=43704287"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Auth → Get JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('jwt', data.token || '');",
+                  "if (data.expiration_time) pm.collectionVariables.set('jwt_expiration', data.expiration_time);",
+                  "pm.test('JWT saved', () => pm.collectionVariables.get('jwt'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Heidi-Api-Key",
+                "value": "{{heidi_api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}jwt?email={{email}}&third_party_internal_id={{third_party_internal_id}}",
+              "host": [
+                "{{baseUrl}}jwt"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{email}}"
+                },
+                {
+                  "key": "third_party_internal_id",
+                  "value": "{{third_party_internal_id}}"
+                }
+              ]
+            },
+            "description": "Retrieve JWT using your Heidi API key + user identifiers."
+          },
+          "response": []
+        },
+        {
+          "name": "Link User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kinde_user_id\": \"kp_xxxx\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}users/linked-account",
+              "host": [
+                "{{baseUrl}}users"
+              ],
+              "path": [
+                "linked-account"
+              ]
+            },
+            "description": "Streams the generated note ({\"data\": \"...\"} chunks)."
+          },
+          "response": []
+        },
+        {
+          "name": "Check Link Status",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}users/linked-account/access",
+              "host": [
+                "{{baseUrl}}users"
+              ],
+              "path": [
+                "linked-account",
+                "access"
+              ]
+            },
+            "description": "Streams the generated note ({\"data\": \"...\"} chunks)."
+          },
+          "response": []
+        },
+        {
+          "name": "Unlink User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}users/linked-account:unlink",
+              "host": [
+                "{{baseUrl}}users"
+              ],
+              "path": [
+                "linked-account:unlink"
+              ]
+            },
+            "description": "Streams the generated note ({\"data\": \"...\"} chunks)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Create Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('201/200', ()=> pm.expect([200,201]).to.include(pm.response.code));",     
+                  "",
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('sessionId', data.session_id);",
+                  "pm.test('Session ID saved', () => pm.collectionVariables.get('sessionId'));"      
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions",
+              "host": [
+                "{{baseUrl}}sessions"
+              ]
+            },
+            "description": "Creates a new session and returns session_id."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Session",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration\": 60,\n  \"language_code\": \"en\",\n  \"output_language_code\": \"en\",\n  \"patient\": {\"name\": \"John Doe\", \"gender\": \"MALE\", \"dob\": \"1990-01-01\"},\n  \"clinician_notes\": [\"Note 1\", \"Note 2\"],\n  \"generate_output_without_recording\": false\n}" 
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}"
+              ]
+            },
+            "description": "Update session metadata (language, patient, notes, etc.)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Session Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}"
+              ]
+            },
+            "description": "Retrieve details for a session."
+          },
+          "response": []
+        },
+        {
+          "name": "List User Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/linked-user?page_size=10",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "linked-user"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieve sessions for the linked user."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attachments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/context-documents",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "context-documents"
+              ]
+            },
+            "description": "Retrieve context documents attached to the session."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Attachments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "context_documents",
+                  "type": "file",
+                  "src": "logo-hda.svg"
+                },
+                {
+                  "key": "meta_data",
+                  "value": "{\n  \"name\": \"file.pdf\",\n  \"date\": \"2025-02-11T11:01:01\",\n  \"additional_context\": \"<string to describe the document, or empty>\",\n  \"unstructured\": false\n}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/context-documents",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "context-documents"
+              ]
+            },
+            "description": "Add context documents to the session."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Attachments",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"ids\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/context-documents",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "context-documents"
+              ]
+            },
+            "description": "Delete context documents from the session."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Clinical Codes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/clinical-codes",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "clinical-codes"
+              ]
+            },
+            "description": "Retrieve clinical codes for the session."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transcription",
+      "item": [
+        {
+          "name": "Initialise Transcription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('recordingId', data.recording_id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/restful-segment-transcription",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "restful-segment-transcription"
+              ]
+            },
+            "description": "Start a transcription; returns recording_id."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Audio Chunk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/Users/andreaepifani/Downloads/mklab-speech (1).mp3"
+                },
+                {
+                  "key": "index",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/restful-segment-transcription/{{recordingId}}:transcribe",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "restful-segment-transcription",
+                "{{recordingId}}:transcribe"
+              ]
+            },
+            "description": "Upload an audio chunk (mp3/ogg). Add multiple requests for multiple chunks with increasing index."
+          },
+          "response": []
+        },
+        {
+          "name": "Finish Transcription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/restful-segment-transcription/{{recordingId}}:finish",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "restful-segment-transcription",
+                "{{recordingId}}:finish"
+              ]
+            },
+            "description": "Complete the transcription session."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Transcript",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/transcript",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "transcript"
+              ]
+            },
+            "description": "Fetch transcript text for the session."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Consult Notes",
+      "item": [
+        {
+          "name": "List Consult Note Templates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}templates/document-templates",
+              "host": [
+                "{{baseUrl}}templates"
+              ],
+              "path": [
+                "document-templates"
+              ]
+            },
+            "description": "Return available consult note templates."
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Consult Note (Template)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"generation_method\": \"TEMPLATE\",\n  \"addition\": \"\",\n  \"template_id\": \"6913e6e4e196c7ee775292fb\",\n  \"voice_style\": \"GOLDILOCKS\",\n  \"brain\": \"LEFT\"\n}"   
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/consult-note",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "consult-note"
+              ]
+            },
+            "description": "Streams the generated note ({\"data\": \"...\"} chunks)."
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Consult Note (Custom Template JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"template\": \"\",\n  \"questions\": [\n    {\n      \"questionId\": \"1\",\n      \"question\": \"Optic disc\",\n      \"description\": \"\",\n      \"answerType\": \"MultipleResponse\",\n      \"answerOptions\": [\n        {\n          \"value\": \"Normal\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Pale\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Cupped\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"GLC\",\n          \"metadata\": {\n            \"description\": \"this field refers to Glaucoma diagnosis or history\"\n          }\n        }\n      ],\n      \"repeatable\": false,\n      \"childQuestions\": []\n    },\n    {\n      \"questionId\": \"2\",\n      \"question\": \"Macula\",\n      \"description\": \"\",\n      \"answerType\": \"MultipleResponse\",\n      \"answerOptions\": [\n        {\n          \"value\": \"Normal\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Drusen\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Hemorrhage\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"AMD\",\n          \"metadata\": {\n            \"description\": \"this field refers to Age-related Macular Degeneration\"\n          }\n        }\n      ],\n      \"repeatable\": false,\n      \"childQuestions\": []\n    },\n    {\n      \"questionId\": \"3\",\n      \"question\": \"Vessels\",\n      \"description\": \"\",\n      \"answerType\": \"MultipleResponse\",\n      \"answerOptions\": [\n        {\n          \"value\": \"Tortuous\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Attenuated\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Hemorrhage\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Exudates\",\n          \"metadata\": {}\n        }\n      ],\n      \"repeatable\": false,\n      \"childQuestions\": []\n    },\n    {\n      \"questionId\": \"4\",\n      \"question\": \"Periphery\",\n      \"description\": \"\",\n      \"answerType\": \"MultipleResponse\",\n      \"answerOptions\": [\n        {\n          \"value\": \"Flat retina\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Pigment changes\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Lattice\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Holes\",\n          \"metadata\": {}\n        },\n        {\n          \"value\": \"Tears\",\n          \"metadata\": {}\n        }\n      ],\n      \"repeatable\": false,\n      \"childQuestions\": []\n    },\n    {\n      \"questionId\": \"5\",\n      \"question\": \"Posterior eye notes\",\n      \"description\": \"\",\n      \"answerType\": \"TextArea\",\n      \"answerOptions\": [],\n      \"repeatable\": false,\n      \"childQuestions\": []\n    }\n  ],\n  \"summaryRequired\": true,\n  \"metadata\": [\n    \"(only include information that has been explicitly mentioned in the transcript or clinical note.)\",\n    \"(Never come up with your own patient details, assessment, plan, interventions, evaluation, and plan for continuing care - use only the transcript or clinical note as a reference for the information include in your output.)\"\n  ]\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/client-customised-template/response",        
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "client-customised-template",
+                "response"
+              ]
+            },
+            "description": "Generates a note from your custom JSON template."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Create Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"document_tab_type\": \"DOCUMENT\",\n  \"generation_method\": \"TEMPLATE\",\n  \"template_id\": \"5eb7cf5a86d9755df3a6c593\",\n  \"voice_style\": \"GOLDILOCKS\",\n  \"brain\": \"LEFT\",\n  \"content_type\": \"MARKDOWN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/documents",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "documents"
+              ]
+            },
+            "description": "Create an empty document for the session."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Documents (List)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/documents",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "documents"
+              ]
+            },
+            "description": "List documents associated with the session."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ask Heidi",
+      "item": [
+        {
+          "name": "Ask AI (streamed)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ai_command_text\": \"Summarise the following text\",\n  \"content\": \"My long paragraph of text\",\n  \"content_type\": \"MARKDOWN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}sessions/{{sessionId}}/ask-ai",
+              "host": [
+                "{{baseUrl}}sessions"
+              ],
+              "path": [
+                "{{sessionId}}",
+                "ask-ai"
+              ]
+            },
+            "description": "Get a streamed AI response from Heidi using the provided content as context."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registrar.api.heidihealth.com/api/v2/ml-scribe/open-api/"
+    },
+    {
+      "key": "heidi_api_key",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "third_party_internal_id",
+      "value": ""
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    },
+    {
+      "key": "jwt_expiration",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "recordingId",
+      "value": ""
+    }
+  ]
+}
