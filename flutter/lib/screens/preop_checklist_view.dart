@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../components/preop_checklist_item.dart';
+import '../components/chat_widget.dart';
 
 class PreOpChecklistView extends StatelessWidget {
   const PreOpChecklistView({super.key, required this.info});
@@ -196,7 +197,7 @@ class PreOpChecklistView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Patient\'s preparation checklist',
+                            "Patient's preparation checklist",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           ListView.builder(
@@ -220,7 +221,24 @@ class PreOpChecklistView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: null,
+        onPressed: () {
+          showModalBottomSheet(
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            context: context,
+            builder: (context) => Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                margin: const EdgeInsets.all(16.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: ChatWidget(info: info),
+                ),
+              ),
+            ),
+          );
+        },
         icon: ImageIcon(Image.asset('images/claude.png').image),
         label: Text('Ask AI'),
       ),
